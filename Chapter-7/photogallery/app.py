@@ -89,6 +89,17 @@ def s3uploading(filename, filenameWithPath):
     return "http://"+BUCKET_NAME+\
         ".s3.us-east-2.amazonaws.com/"+ path_filename  
 
+# Route for handling the login page logic
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'User1' or request.form['password'] != 'password':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)
+
 @app.route('/', methods=['GET', 'POST'])
 def home_page():
     response = table.scan()
