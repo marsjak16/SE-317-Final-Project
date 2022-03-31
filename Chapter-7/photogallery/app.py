@@ -97,7 +97,7 @@ def login():
         if request.form['username'] != 'User1' or request.form['password'] != 'password':
             error = 'Invalid Credentials. Please try again.'
         else:
-            return redirect(url_for('home'))
+            return redirect(url_for('home_page'))
     return render_template('login.html', error=error)
 
 @app.route('/', methods=['GET', 'POST'])
