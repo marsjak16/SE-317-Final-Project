@@ -37,10 +37,10 @@ app = Flask(__name__, static_url_path="")
 
 UPLOAD_FOLDER = os.path.join(app.root_path,'media')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
-AWS_ACCESS_KEY="<enter>"
-AWS_SECRET_KEY="<enter>+0vqOmhI3ObEtIvQ+jmAkh/"
-REGION="us-east-1"
-BUCKET_NAME="<enter>"
+AWS_ACCESS_KEY="AKIA36UMOWLEIKEEXP5Q"
+AWS_SECRET_KEY="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"
+REGION="us-east-2"
+BUCKET_NAME="photogallery-317"
 
 dynamodb = boto3.resource('dynamodb', aws_access_key_id=AWS_ACCESS_KEY,
                             aws_secret_access_key=AWS_SECRET_KEY,
@@ -66,7 +66,7 @@ def getExifData(path_name):
     f = open(path_name, 'rb')
     tags = exifread.process_file(f)
     ExifData={}
-    for tag in tags.keys():
+    for tag in list(tags.keys()):
         if tag not in ('JPEGThumbnail', 
                         'TIFFThumbnail', 
                         'Filename', 
@@ -82,12 +82,12 @@ def s3uploading(filename, filenameWithPath):
                        
     bucket = BUCKET_NAME
     path_filename = "photos/" + filename
-    print path_filename
+    print(path_filename)
     s3.upload_file(filenameWithPath, bucket, path_filename)  
     s3.put_object_acl(ACL='public-read', 
                 Bucket=bucket, Key=path_filename)
     return "http://"+BUCKET_NAME+\
-        ".s3-website-us-east-1.amazonaws.com/"+ path_filename  
+        ".s3.us-east-2.amazonaws.com/"+ path_filename  
 
 @app.route('/', methods=['GET', 'POST'])
 def home_page():
@@ -108,12 +108,12 @@ def add_photo():
         tags = request.form['tags']
         description = request.form['description']
 
-        print title,tags,description
+        print(title,tags,description)
         if file and allowed_file(file.filename):
             filename = file.filename
             filenameWithPath = os.path.join(UPLOAD_FOLDER, 
                                         filename)
-            print filenameWithPath
+            print(filenameWithPath)
             file.save(filenameWithPath)
             uploadedFileURL = s3uploading(filename, 
                                         filenameWithPath);
@@ -146,7 +146,7 @@ def view_photo(photoID):
     )
 
     items = response['Items']
-    print(items[0])
+    print((items[0]))
     tags=items[0]['Tags'].split(',')
     exifdata=json.loads(items[0]['ExifData'])
 
